@@ -1,0 +1,14 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+firebase-debug.log
+
+# Dependencies
+node_modules/
+
+# IDE
+.vscode/
+.idea/
