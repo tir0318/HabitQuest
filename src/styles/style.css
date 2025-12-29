@@ -358,13 +358,20 @@ body {
 
 .current-date {
     font-size: var(--font-size-sm);
-    color: var(--text-primary);
+}
+
+.header-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
 }
 
 .header-right {
     display: flex;
     align-items: center;
-    gap: var(--space-lg);
+    gap: var(--space-md);
+    flex: 1;
+    justify-content: flex-end;
 }
 
 .quick-stats {
@@ -523,7 +530,19 @@ body {
 
 .page.active {
     display: block;
-    animation: fadeIn 0.3s ease;
+    animation: pageSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes pageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .page-header {
@@ -559,7 +578,12 @@ body {
 
 @media (max-width: 768px) {
     .header-center {
+        display: flex;
+    }
+
+    .quick-stats {
         display: none;
+        /* Hide stats in header on mobile to save space */
     }
 
     .page-container {

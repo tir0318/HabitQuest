@@ -1,58 +1,16 @@
-# ⚔️ HabitQuest (ハビットクエスト)
+# React + Vite
 
-**習慣化を冒険に変える、ゲーミフィケーションタスク管理アプリ**
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-HabitQuestは、日々のタスク管理や勉強時間の記録をRPGのような感覚で行えるWebアプリケーションです。タスクをこなしてXP（経験値）を稼ぎ、レベルアップを目指しながら楽しく習慣形成ができます。
+Currently, two official plugins are available:
 
-## ✨ 主な機能
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-### 🎮 ゲーミフィケーション
-- **レベルアップシステム**: タスク完了でXPを獲得し、レベルアップ！
-- **HP（体力）**: サボるとダメージを受ける！？モチベーション維持の仕組み。
-- **ストリーク**: 連続達成記録でボーナスXPゲット。
+## React Compiler
 
-### 📋 タスク＆習慣管理
-- **3つのタスクタイプ**:
-  - ✅ **日課 (Dailies)**: 毎日リセットされるルーチンワーク。
-  - 🔄 **習慣 (Habits)**: 良い習慣（＋）と悪い習慣（－）の記録。
-  - 📌 **やること (To-Dos)**: 単発のタスク管理。
-- **状態管理**: 「未着手」「進行中」「本日対応」「完了」をステータス管理。
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-### ⏱️ ポモドーロタイマー & 時間管理
-- **集中タイマー**: 50分作業＋10分休憩のポモドーロサイクル（カスタマイズ可能）。
-- **勉強時間ログ**: 日々の学習時間を自動集計し、グラフで可視化。
+## Expanding the ESLint configuration
 
-### ☁️ クラウド同期 (Firebase)
-- **マルチデバイス対応**: PCで入力したデータをスマホで確認・更新可能。
-- **リアルタイム同期**: データの変更は即座に全端末に反映されます。
-
-### 📓 ジャーナル & メモ
-- **振り返り**: 「今日やったこと」や「気分」を記録。
-- **クイックメモ**: 思いついたことを即座にメモできる固定バー。
-
-## 🛠️ 技術スタック
-
-- **Frontend**: Vanilla HTML5, CSS3, JavaScript (ES6+)
-- **Backend/DB**: Google Firebase (Firestore, Authentication)
-- **Hosting**: Netlify / GitHub Pages (推奨)
-
-## 🚀 始め方
-
-### ローカルでの実行
-1. リポジトリをクローンします。
-   ```bash
-   git clone https://github.com/tir0318/HabitQuest.git
-   ```
-2. `index.html` をブラウザで開くだけで動作します。
-
-### Firebase設定
-`js/firebase-config.js` にFirebaseプロジェクトの設定情報が含まれています。独自のプロジェクトを使用する場合は、Firebaseコンソールでプロジェクトを作成し、設定を書き換えてください。
-
-## 📱 スマートフォンでの利用
-Netlify Dropなどにフォルダごとアップロードすることで、簡単にWeb上に公開し、スマホからアクセスできます。
-
-## 📜 ライセンス
-This project is for personal use.
-
----
-Created by tir0318 & AI Assistant
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
