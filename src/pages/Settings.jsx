@@ -27,9 +27,7 @@ export default function Settings() {
 
     return (
         <section className="page active" id="page-settings">
-            <div className="page-header">
-                <h1>設定</h1>
-            </div>
+
 
             <div className="settings-container">
                 <div className="settings-section">

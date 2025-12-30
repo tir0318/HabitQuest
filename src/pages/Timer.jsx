@@ -30,9 +30,7 @@ export default function Timer() {
 
     return (
         <section className="page active" id="page-timer">
-            <div className="page-header">
-                <h1>ポモドーロタイマー</h1>
-            </div>
+
             <div className="timer-container">
                 <div className="timer-main">
                     <div className="timer-mode-tabs">

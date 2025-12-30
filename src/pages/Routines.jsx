@@ -40,10 +40,7 @@ export default function Routines() {
 
     return (
         <section className="page active" id="page-routines">
-            <div className="page-header">
-                <h1>日課管理</h1>
-                <button className="btn btn-primary" onClick={openCreateModal}>+ 新規日課</button>
-            </div>
+
 
             <div className="task-filters">
                 <div className="filter-group">

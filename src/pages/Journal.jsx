@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStorage } from '../contexts/StorageContext';
 import { useToast } from '../contexts/ToastContext';
+import { formatDateTime, formatDate } from '../lib/dateUtils';
 
 export default function Journal() {
     const { journals, updateJournals, settings } = useStorage();
@@ -48,6 +49,13 @@ export default function Journal() {
         if (offset > 0 && newDate > new Date().toISOString().split('T')[0]) return;
 
         setCurrentDate(newDate);
+    };
+
+    // Quick jump via date picker
+    const handleDateInput = (e) => {
+        const val = e.target.value;
+        if (!val) return;
+        setCurrentDate(val);
     };
 
     // Timer Logic
@@ -121,11 +129,11 @@ export default function Journal() {
     return (
         <section className="page active" id="page-journal">
             <div className="page-header">
-                <h1>ジャーナル</h1>
                 <div className="journal-date-nav">
                     <button className="btn btn-icon" onClick={() => changeDate(-1)}>◀</button>
-                    <span id="journal-date">{new Date(currentDate).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}</span>
+                    <span id="journal-date">{`${formatDate(currentDate)} (${new Date(currentDate).toLocaleDateString('ja-JP', { weekday: 'short' })})`}</span>
                     <button className="btn btn-icon" onClick={() => changeDate(1)}>▶</button>
+                    <input type="date" className="styled-input" value={currentDate} onChange={handleDateInput} style={{ marginLeft: '12px' }} />
                 </div>
             </div>
 

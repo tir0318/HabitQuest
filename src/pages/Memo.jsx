@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useStorage } from '../contexts/StorageContext';
 import { useToast } from '../contexts/ToastContext';
+import { formatDateTime } from '../lib/dateUtils';
 
 // Simple Modal specific to Memo
 function MemoModal({ memo, onClose, onSave, categories }) {
@@ -110,7 +111,7 @@ export default function Memo() {
     };
 
     const formatDate = (dateStr) => {
-        return new Date(dateStr).toLocaleDateString('ja-JP', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        return formatDateTime(dateStr);
     };
 
     const shareMemo = async (memo) => {
@@ -138,10 +139,7 @@ export default function Memo() {
 
     return (
         <section className="page active" id="page-memo">
-            <div className="page-header">
-                <h1>メモ</h1>
-                <button className="btn btn-primary" onClick={openCreateModal}>+ 新規メモ</button>
-            </div>
+
             <div className="memo-container">
                 <div className="memo-section quick-memos">
                     <h3>⚡ クイックメモ</h3>

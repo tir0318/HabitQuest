@@ -99,19 +99,7 @@ export default function Calendar() {
 
     return (
         <section className="page active" id="page-calendar">
-            <div className="page-header">
-                <h1>カレンダー</h1>
-                <div className="calendar-nav">
-                    <button className="btn btn-icon" onClick={prevMonth}>◀</button>
-                    <span id="calendar-month">{format(currentMonth, 'yyyy年M月', { locale: ja })}</span>
-                    <button className="btn btn-icon" onClick={nextMonth}>▶</button>
-                    <button className="btn btn-secondary btn-small" onClick={() => {
-                        const now = new Date();
-                        setCurrentMonth(now);
-                        setSelectedDate(now);
-                    }} style={{ marginLeft: '10px' }}>今日</button>
-                </div>
-            </div>
+
 
             <div className="calendar-container">
                 <div className="calendar-grid">

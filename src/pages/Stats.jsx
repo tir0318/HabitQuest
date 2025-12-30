@@ -102,10 +102,7 @@ export default function Stats() {
 
     return (
         <section className="page active" id="page-stats">
-            <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h1>統計・分析</h1>
-                <button className="btn btn-secondary btn-small" onClick={shareProgress}>プログレスを共有 📤</button>
-            </div>
+
 
             <div className="stats-container">
                 <div className="stats-card">
@@ -148,7 +145,7 @@ export default function Stats() {
                                         label={{ value: '分', angle: -90, position: 'insideLeft', fill: 'var(--text-secondary)' }}
                                     />
                                     <Tooltip content={<CustomTooltip />} />
-                                    <Bar dataKey="time" fill="var(--primary-color)" radius={[4, 4, 0, 0]} />
+                                    <Bar dataKey="time" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>

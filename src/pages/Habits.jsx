@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useStorage } from '../contexts/StorageContext';
 import { useGamification } from '../hooks/useGamification';
 import { useToast } from '../contexts/ToastContext';
+import MarkdownNote from '../components/MarkdownNote';
 import HabitModal from '../components/HabitModal';
 
 // Helper Component for Habit Card
@@ -14,26 +15,30 @@ function HabitCard({ habit, onEdit, onTrack, onDelete, categories }) {
 
     return (
         <div className="habit-card" onClick={() => onEdit(habit)}>
-            <div className="habit-actions">
-                {habit.type === 'positive' ? (
-                    <button className="habit-btn positive" onClick={(e) => { e.stopPropagation(); onTrack(habit, true); }}>+</button>
-                ) : (
-                    <button className="habit-btn negative" onClick={(e) => { e.stopPropagation(); onTrack(habit, false); }}>−</button>
-                )}
-            </div>
-            <div className="habit-info">
-                <span className="habit-name">{habit.name}</span>
-                <div className="task-category-tags">
-                    {taskCategories.map(cat => (
-                        <span key={cat.id} className="task-category-tag" style={{ backgroundColor: cat.color + '22', color: cat.color, border: `1px solid ${cat.color}44` }}>
-                            {cat.icon} {cat.name}
-                        </span>
-                    ))}
+            <div className="habit-header-row" style={{ display: 'flex', width: '100%', alignItems: 'center', gap: '15px' }}>
+                <div className="habit-actions">
+                    {habit.type === 'positive' ? (
+                        <button className="habit-btn positive" onClick={(e) => { e.stopPropagation(); onTrack(habit, true); }}>+</button>
+                    ) : (
+                        <button className="habit-btn negative" onClick={(e) => { e.stopPropagation(); onTrack(habit, false); }}>−</button>
+                    )}
                 </div>
-                <span className="habit-streak">今日: {habit.lastTracked === today ? habit.todayCount : 0}回</span>
+                <div className="habit-info" style={{ flex: 1 }}>
+                    <span className="habit-name" style={{ fontWeight: 'bold' }}>{habit.name}</span>
+                    <div className="task-category-tags">
+                        {taskCategories.map(cat => (
+                            <span key={cat.id} className="task-category-tag" style={{ backgroundColor: cat.color + '22', color: cat.color, border: `1px solid ${cat.color}44` }}>
+                                {cat.icon} {cat.name}
+                            </span>
+                        ))}
+                    </div>
+                    <span className="habit-streak">今日: {habit.lastTracked === today ? habit.todayCount : 0}回</span>
+                </div>
+                <span className="habit-count" style={{ whiteSpace: 'nowrap' }}>{habit.type === 'positive' ? '+' : '-'}{habit.type === 'positive' ? habit.reward || 5 : habit.penalty || 5} XP</span>
+                <button className="btn btn-small btn-danger" onClick={(e) => { e.stopPropagation(); onDelete(habit.id); }} title="削除">×</button>
             </div>
-            <span className="habit-count">{habit.type === 'positive' ? '+' : '-'}{habit.type === 'positive' ? habit.reward || 5 : habit.penalty || 5} XP</span>
-            <button className="btn btn-small btn-danger" onClick={(e) => { e.stopPropagation(); onDelete(habit.id); }} title="削除">×</button>
+
+            <MarkdownNote content={habit.notes} />
         </div>
     );
 }
@@ -85,10 +90,7 @@ export default function Habits() {
 
     return (
         <section className="page active" id="page-habits">
-            <div className="page-header">
-                <h1>習慣トラッカー</h1>
-                <button className="btn btn-primary" onClick={openCreateModal}>+ 新規習慣</button>
-            </div>
+
             <div className="habits-container">
                 <div className="habit-section positive-habits">
                     <h3>✅ ポジティブ習慣</h3>

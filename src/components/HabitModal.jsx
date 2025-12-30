@@ -12,6 +12,7 @@ export default function HabitModal({ habit, onClose }) {
         categories: [],
         reward: 5,
         penalty: 5,
+        notes: '',
     });
 
     useEffect(() => {
@@ -22,6 +23,7 @@ export default function HabitModal({ habit, onClose }) {
                 categories: habit.categories || (habit.category ? [habit.category] : []),
                 reward: habit.reward || 5,
                 penalty: habit.penalty || 5,
+                notes: habit.notes || '',
             });
         }
     }, [habit]);
@@ -110,6 +112,16 @@ export default function HabitModal({ habit, onClose }) {
                                 onChange={e => setFormData({ ...formData, [formData.type === 'positive' ? 'reward' : 'penalty']: parseInt(e.target.value) })}
                             />
                         </div>
+                    </div>
+
+                    <div className="form-group">
+                        <label>備考 (Markdown対応)</label>
+                        <textarea
+                            rows="3"
+                            value={formData.notes}
+                            onChange={e => setFormData({ ...formData, notes: e.target.value })}
+                            placeholder="詳細やルールなどを記入..."
+                        ></textarea>
                     </div>
                 </div>
                 <div className="modal-footer">

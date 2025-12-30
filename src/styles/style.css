@@ -360,6 +360,67 @@ body {
     font-size: var(--font-size-sm);
 }
 
+.header-date-time-wrapper {
+    background: var(--bg-glass);
+    padding: 8px 20px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 0 15px rgba(129, 140, 248, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+.header-date-time {
+    font-size: 1.1rem;
+    color: var(--text-highlight);
+    font-weight: 700;
+    font-family: 'Inter', 'Noto Sans JP', monospace;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 10px rgba(129, 140, 248, 0.3);
+}
+
+/* Make date/time block fixed-width and use tabular numbers so updates don't shift layout */
+.header-date-time-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 220px;
+    justify-content: center;
+}
+
+.header-date-time {
+    min-width: 180px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+}
+
+/* Ensure search button doesn't flex or move when date changes */
+.search-trigger {
+    flex: 0 0 auto;
+}
+
+.search-trigger {
+    margin-left: 8px;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    color: var(--text-primary);
+}
+
+.search-trigger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(129, 140, 248, 0.08);
+    border-color: var(--accent-primary);
+}
+
 .header-center {
     flex: 1;
     display: flex;
@@ -545,17 +606,7 @@ body {
     }
 }
 
-.page-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--space-lg);
-}
-
-.page-header h1 {
-    font-size: var(--font-size-xl);
-    font-weight: 600;
-}
+/* page-header styles removed (headers simplified) */
 
 /* Responsive */
 @media (max-width: 1024px) {
@@ -577,16 +628,130 @@ body {
 }
 
 @media (max-width: 768px) {
+
+    /* Keep header center visible on mobile but compact it */
     .header-center {
         display: flex;
+        justify-content: flex-start;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .header-date-time-wrapper {
+        padding: 6px 10px;
+    }
+
+    .header-date-time {
+        font-size: 0.95rem;
     }
 
     .quick-stats {
         display: none;
-        /* Hide stats in header on mobile to save space */
     }
 
     .page-container {
         padding: var(--space-md);
     }
+
+    .dashboard-grid,
+    .tasks-container,
+    .habits-container {
+        grid-template-columns: 1fr !important;
+    }
+
+    .task-card {
+        padding: var(--space-sm);
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 10px;
+    }
+}
+
+@media (max-width: 420px) {
+    .header-center {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-date-time-wrapper {
+        width: 100%;
+    }
+
+    .search-trigger {
+        align-self: flex-end;
+    }
+}
+
+/* Markdown Note Styles */
+.markdown-note-container {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-color);
+}
+
+.note-toggle {
+    background: none;
+    border: none;
+    color: var(--accent-primary);
+    font-size: 0.75rem;
+    cursor: pointer;
+    padding: 2px 0;
+    display: block;
+    width: 100%;
+    text-align: left;
+}
+
+.note-toggle:hover {
+    text-decoration: underline;
+}
+
+.rendered-notes {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-sm);
+    margin-top: 5px;
+}
+
+.rendered-notes p {
+    margin-bottom: 8px;
+}
+
+.rendered-notes ul,
+.rendered-notes ol {
+    margin-left: 20px;
+    margin-bottom: 8px;
+}
+
+.rendered-notes blockquote {
+    border-left: 3px solid var(--accent-primary);
+    padding-left: 10px;
+    color: var(--text-muted);
+}
+
+.rendered-notes code {
+    background: var(--bg-tertiary);
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+.rendered-notes pre {
+    background: var(--bg-tertiary);
+    padding: 10px;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin-bottom: 8px;
+}
+
+.rendered-notes h1,
+.rendered-notes h2,
+.rendered-notes h3 {
+    font-size: 1rem;
+    margin-top: 12px;
+    margin-bottom: 6px;
 }

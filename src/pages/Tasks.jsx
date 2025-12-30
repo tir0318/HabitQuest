@@ -46,10 +46,7 @@ export default function Tasks() {
 
     return (
         <section className="page active" id="page-tasks">
-            <div className="page-header">
-                <h1>タスク管理</h1>
-                <button className="btn btn-primary" onClick={openCreateModal}>+ 新規タスク</button>
-            </div>
+
 
             <div className="task-filters">
                 <div className="filter-group">

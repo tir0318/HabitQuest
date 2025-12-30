@@ -2,12 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useStorage } from '../contexts/StorageContext';
 import SearchModal from './SearchModal';
+import { formatDateTime } from '../lib/dateUtils';
 
 export default function Header({ onToggleMenu }) {
     const { currentUser, login, logout } = useAuth();
     const { settings, updateSettings, user } = useStorage();
     const [time, setTime] = useState(new Date());
     const [searchOpen, setSearchOpen] = useState(false);
+
+    // Dynamic style for clock
+    const clockStyle = {
+        fontSize: '1.4rem',
+        fontWeight: '800',
+        background: 'var(--accent-gradient)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        fontFamily: "'Inter', 'Noto Sans JP', monospace",
+        letterSpacing: '1px'
+    };
 
     useEffect(() => {
         const timer = setInterval(() => setTime(new Date()), 1000);
@@ -29,18 +41,18 @@ export default function Header({ onToggleMenu }) {
     }, [settings.darkMode]);
 
     // Format date time
-    const timeStr = time.toLocaleTimeString('ja-JP', { hour12: false });
-    const dateStr = time.toLocaleDateString('ja-JP', {
-        year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
-    });
+    const dateStr = formatDateTime(time);
 
     return (
         <>
             <header className="main-header" id="main-header">
                 <button className="menu-toggle" id="menu-toggle" onClick={onToggleMenu}>☰</button>
                 <div className="header-center">
+                    <div className="header-date-time-wrapper">
+                        <div className="header-date-time" style={clockStyle}>{dateStr}</div>
+                    </div>
                     {/* Search Button (Mobile/Desktop) */}
-                    <button className="btn btn-icon" onClick={() => setSearchOpen(true)} title="検索">
+                    <button className="btn btn-icon search-trigger" onClick={() => setSearchOpen(true)} title="検索">
                         🔍
                     </button>
                 </div>

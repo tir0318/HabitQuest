@@ -152,6 +152,15 @@ export function useTimer() {
 
     const skipSession = () => completeSession();
 
+    // Start a quick custom timer (minutes)
+    const startQuick = (minutes) => {
+        const secs = Math.max(1, Math.floor(minutes * 60));
+        setMode('work');
+        setTotalTime(secs);
+        setTimeLeft(secs);
+        setIsRunning(true);
+    };
+
     // Helper format
     const formatTime = (secs) => {
         const m = Math.floor(secs / 60);
@@ -172,5 +181,6 @@ export function useTimer() {
         isRunning, toggleTimer, resetTimer, skipSession,
         session,
         currentTaskId, setCurrentTaskId,
+        startQuick,
     };
 }

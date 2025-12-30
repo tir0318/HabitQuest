@@ -13,7 +13,12 @@ export default function TaskModal({ task, initialType = 'todo', onClose }) {
         dueDate: '',
         priority: 'medium',
         status: 'not-started',
-        notes: ''
+        notes: '',
+        repeat: {
+            type: 'none', // none, daily, weekly, monthly
+            dayOfWeek: [], // 0-6
+            dayOfMonth: 1
+        }
     });
 
     useEffect(() => {
@@ -25,7 +30,8 @@ export default function TaskModal({ task, initialType = 'todo', onClose }) {
                 dueDate: task.dueDate || '',
                 priority: task.priority || 'medium',
                 status: task.status || 'not-started',
-                notes: task.notes || ''
+                notes: task.notes || '',
+                repeat: task.repeat || { type: 'none', dayOfWeek: [], dayOfMonth: 1 }
             });
         }
     }, [task, initialType]);
@@ -119,22 +125,67 @@ export default function TaskModal({ task, initialType = 'todo', onClose }) {
                                 <option value="high">高</option>
                             </select>
                         </div>
-                    </div>
-                    {formData.type !== 'daily' && (
-                        <div className="form-row">
+                        {formData.type === 'todo' && (
                             <div className="form-group">
-                                <label>状態</label>
+                                <label>ステータス</label>
                                 <select value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value })}>
                                     <option value="not-started">未着手</option>
                                     <option value="in-progress">進行中</option>
                                     <option value="today">本日対応</option>
                                 </select>
                             </div>
+                        )}
+                    </div>
+                    {formData.type === 'daily' && (
+                        <div className="form-group">
+                            <label>繰り返し設定</label>
+                            <select
+                                value={formData.repeat.type}
+                                onChange={e => setFormData({ ...formData, repeat: { ...formData.repeat, type: e.target.value } })}
+                            >
+                                <option value="none">設定なし</option>
+                                <option value="daily">毎日</option>
+                                <option value="weekly">毎週</option>
+                                <option value="monthly">毎月</option>
+                            </select>
+
+                            {formData.repeat.type === 'weekly' && (
+                                <div className="weekday-selector" style={{ display: 'flex', gap: '5px', marginTop: '10px' }}>
+                                    {['日', '月', '火', '水', '木', '金', '土'].map((day, idx) => (
+                                        <button
+                                            key={idx}
+                                            type="button"
+                                            className={`btn btn-small ${formData.repeat.dayOfWeek.includes(idx) ? 'btn-primary' : 'btn-secondary'}`}
+                                            onClick={() => {
+                                                const current = formData.repeat.dayOfWeek;
+                                                const next = current.includes(idx) ? current.filter(d => d !== idx) : [...current, idx];
+                                                setFormData({ ...formData, repeat: { ...formData.repeat, dayOfWeek: next } });
+                                            }}
+                                            style={{ padding: '4px 8px' }}
+                                        >
+                                            {day}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+
+                            {formData.repeat.type === 'monthly' && (
+                                <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <input
+                                        type="number"
+                                        min="1" max="31"
+                                        value={formData.repeat.dayOfMonth}
+                                        onChange={e => setFormData({ ...formData, repeat: { ...formData.repeat, dayOfMonth: parseInt(e.target.value) } })}
+                                        style={{ width: '60px' }}
+                                    />
+                                    <span>日</span>
+                                </div>
+                            )}
                         </div>
                     )}
                     <div className="form-group">
-                        <label>備考</label>
-                        <textarea rows="3" value={formData.notes} onChange={e => setFormData({ ...formData, notes: e.target.value })}></textarea>
+                        <label>備考 (Markdown対応)</label>
+                        <textarea rows="3" value={formData.notes} onChange={e => setFormData({ ...formData, notes: e.target.value })} placeholder="詳細やメモを入力..."></textarea>
                     </div>
                 </div>
                 <div className="modal-footer">
