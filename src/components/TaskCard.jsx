@@ -75,8 +75,6 @@ export default function TaskCard({ task, onEdit }) {
         const idx = statusOrder.indexOf(current);
         const next = statusOrder[(idx + 1) % statusOrder.length];
 
-        if (!window.confirm(`ステータスを「${statusLabels[next]}」に変更しますか？`)) return;
-
         const updated = tasks.map(t => t.id === task.id ? { ...t, status: next } : t);
         updateTasks(updated);
         showToast(`${statusLabels[next]} に変更しました`, 'success');
@@ -86,26 +84,24 @@ export default function TaskCard({ task, onEdit }) {
         <div className={`task-card ${task.completed ? 'completed' : ''}`} onClick={() => onEdit(task)}>
             <div className="task-header">
                 <div className={`task-checkbox ${task.completed ? 'checked' : ''}`} onClick={handleToggle}></div>
-                <div className="task-content-main" style={{ flex: 1 }}>
-                    <span className="task-name" style={{ fontWeight: 'bold' }}>{task.name}</span>
-                    <div className="task-meta-row" style={{ display: 'flex', gap: '10px', fontSize: '0.8rem', marginTop: '4px' }}>
+                <div className="task-content-main">
+                    <span className="task-name">{task.name}</span>
+                    <div className="task-meta-row">
                         {task.type !== 'daily' && <span className={`task-priority ${task.priority}`}>{priorityLabels[task.priority]}</span>}
+                        {task.type !== 'daily' && (
+                            <button className={`status-badge status-${task.status || 'not-started'}`} onClick={handleStatusCycle} title="ステータス切替">
+                                {statusLabels[task.status || 'not-started']}
+                            </button>
+                        )}
                         {task.type === 'daily' && task.repeat && task.repeat.type !== 'none' && (
-                            <span className="task-repeat-badge" style={{ color: 'var(--primary-color)' }}>
+                            <span className="task-repeat-badge">
                                 🔄 {getRepeatText()}
                             </span>
                         )}
                         {task.type !== 'daily' && task.dueDate && <span className="task-due">📅 {task.dueDate}</span>}
                     </div>
                 </div>
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                    {task.type !== 'daily' && (
-                        <button className={`btn btn-small status-btn status-${task.status || 'not-started'}`} onClick={handleStatusCycle} title="ステータス切替">
-                            {statusLabels[task.status || 'not-started']}
-                        </button>
-                    )}
-                    <button className="btn btn-small btn-danger delete-task" onClick={handleDelete} title="削除">×</button>
-                </div>
+                <button className="delete-task-btn" onClick={handleDelete} title="削除">🗑</button>
             </div>
 
             {taskCategories.length > 0 && (

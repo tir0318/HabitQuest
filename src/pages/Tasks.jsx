@@ -46,7 +46,9 @@ export default function Tasks() {
 
     return (
         <section className="page active" id="page-tasks">
-
+            <div className="page-header">
+                <button className="btn btn-primary btn-large" onClick={openCreateModal}>+ 新規追加</button>
+            </div>
 
             <div className="task-filters">
                 <div className="filter-group">

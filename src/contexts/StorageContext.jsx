@@ -28,7 +28,9 @@ const DEFAULTS = {
         habitXP: 5,
         damage: 5,
         darkMode: true,
-        soundEnabled: true
+        soundEnabled: true,
+        autoStartWork: false,
+        autoStartBreak: false
     },
     user: {
         level: 1,
@@ -71,6 +73,7 @@ export function StorageProvider({ children }) {
     const [quickMemos, setQuickMemos] = useState(DEFAULTS.quickMemos);
     const [studyRecords, setStudyRecords] = useState(DEFAULTS.studyRecords);
     const [isLoading, setIsLoading] = useState(true);
+    const [showRoutineResetModal, setShowRoutineResetModal] = useState(false);
 
     const migrateData = (keyShort, value) => {
         if (!value) return value;
@@ -189,26 +192,35 @@ export function StorageProvider({ children }) {
     useEffect(() => {
         const today = new Date().toISOString().split('T')[0];
         if (user.lastActiveDate && user.lastActiveDate !== today) {
-            console.log('New day detected, resetting dailies...');
-
-            // Reset daily tasks
-            const updatedTasks = tasks.map(t => t.type === 'daily' ? { ...t, completed: false } : t);
-            if (JSON.stringify(updatedTasks) !== JSON.stringify(tasks)) {
-                update('tasks', updatedTasks, setTasks);
-            }
-
-            // Reset habit counts (already handled partly in Habits.jsx tracking, but clean reset here is safer)
-            const updatedHabits = habits.map(h => ({ ...h, todayCount: 0 }));
-            if (JSON.stringify(updatedHabits) !== JSON.stringify(habits)) {
-                update('habits', updatedHabits, setHabits);
-            }
-
-            // Update streak logic could go here
-            update('user', { ...user, lastActiveDate: today }, setUser);
+            console.log('New day detected, showing routine reset modal...');
+            setShowRoutineResetModal(true);
         } else if (!user.lastActiveDate) {
             update('user', { ...user, lastActiveDate: today }, setUser);
         }
     }, [user.lastActiveDate, tasks, habits]);
+
+    const confirmRoutineReset = () => {
+        const today = new Date().toISOString().split('T')[0];
+        console.log('Resetting daily routines...');
+
+        // Reset daily tasks
+        const updatedTasks = tasks.map(t => t.type === 'daily' ? { ...t, completed: false } : t);
+        if (JSON.stringify(updatedTasks) !== JSON.stringify(tasks)) {
+            update('tasks', updatedTasks, setTasks);
+        }
+
+        // Reset habit counts
+        const updatedHabits = habits.map(h => ({ ...h, todayCount: 0 }));
+        if (JSON.stringify(updatedHabits) !== JSON.stringify(habits)) {
+            update('habits', updatedHabits, setHabits);
+        }
+
+        // Update user lastActiveDate
+        update('user', { ...user, lastActiveDate: today }, setUser);
+
+        // Close modal
+        setShowRoutineResetModal(false);
+    };
 
     const hardReset = async () => {
         if (!window.confirm('すべてのデータをリセットしますか？この操作は取り消せません。')) return;
@@ -260,7 +272,10 @@ export function StorageProvider({ children }) {
         quickMemos, updateQuickMemos: (v) => update('quickMemos', v, setQuickMemos),
         studyRecords, updateStudyRecords: (v) => update('studyRecords', v, setStudyRecords),
         hardReset,
-        isLoading
+        isLoading,
+        showRoutineResetModal,
+        setShowRoutineResetModal,
+        confirmRoutineReset
     };
 
     return (

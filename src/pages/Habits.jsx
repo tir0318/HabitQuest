@@ -90,6 +90,9 @@ export default function Habits() {
 
     return (
         <section className="page active" id="page-habits">
+            <div className="page-header">
+                <button className="btn btn-primary btn-large" onClick={openCreateModal}>+ 新規追加</button>
+            </div>
 
             <div className="habits-container">
                 <div className="habit-section positive-habits">

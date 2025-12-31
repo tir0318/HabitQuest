@@ -1,13 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLocation } from 'react';
 import { useStorage } from '../contexts/StorageContext';
 import { useToast } from '../contexts/ToastContext';
+import { useLocation as useRouterLocation } from 'react-router-dom';
 import { formatDateTime, formatDate } from '../lib/dateUtils';
 
 export default function Journal() {
     const { journals, updateJournals, settings } = useStorage();
     const { showToast } = useToast();
+    const location = useRouterLocation();
 
-    const [currentDate, setCurrentDate] = useState(new Date().toISOString().split('T')[0]);
+    // Check if date was passed from Calendar
+    const initialDate = location.state?.date || new Date().toISOString().split('T')[0];
+    const [currentDate, setCurrentDate] = useState(initialDate);
 
     // Derived state for the current journal entry
     const currentJournal = journals[currentDate] || { freeform: '', goals: '', mood: null, accomplishments: [] };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTimer } from '../hooks/useTimer';
+import { useTimer } from '../contexts/TimerContext';
 import { useStorage } from '../contexts/StorageContext';
 
 export default function Timer() {
@@ -22,7 +22,8 @@ export default function Timer() {
     const formatDuration = (s) => {
         const h = Math.floor(s / 3600);
         const m = Math.floor((s % 3600) / 60);
-        return `${h}:${m.toString().padStart(2, 0)}`;
+        const sec = s % 60;
+        return `${h}:${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
     };
 
     // Filter incomplete tasks for dropdown

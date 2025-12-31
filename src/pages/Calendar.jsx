@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     format,
     startOfMonth,
@@ -16,6 +17,7 @@ import { ja } from 'date-fns/locale';
 import { useStorage } from '../contexts/StorageContext';
 
 export default function Calendar() {
+    const navigate = useNavigate();
     const { studyRecords, journals } = useStorage();
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -57,20 +59,32 @@ export default function Calendar() {
         // Mood Emojis
         const moodEmojis = { great: '😄', good: '🙂', neutral: '😐', bad: '😔', terrible: '😢' };
 
-        if ((!record || (record.studyTime === 0 && record.pomodoros === 0)) && (!journal || !journal.mood)) {
-            return (
-                <div className="day-details">
-                    <h4>{format(selectedDate, 'yyyy年M月d日')}</h4>
-                    <p className="empty-message">この日の記録はありません</p>
-                </div>
-            );
-        }
+        const hasStudyRecord = record && (record.studyTime > 0 || record.pomodoros > 0);
+        const hasJournalData = journal && (journal.mood || journal.freeform);
 
+        // Always show a minimum container with min-height to maintain layout stability
         return (
-            <div className="day-details">
-                <h4>{format(selectedDate, 'yyyy年M月d日')}</h4>
+            <div className="day-details" style={{ minHeight: '300px' }}>
+                <h4 style={{ marginTop: 0 }}>{format(selectedDate, 'yyyy年M月d日')}</h4>
 
-                {record && (record.studyTime > 0 || record.pomodoros > 0) && (
+                {!hasStudyRecord && !hasJournalData && (
+                    <div style={{
+                        textAlign: 'center',
+                        padding: '40px 20px',
+                        color: '#999'
+                    }}>
+                        <p className="empty-message">この日の記録はありません</p>
+                        <button
+                            className="btn btn-primary"
+                            onClick={() => navigate('/journal', { state: { date: dateStr } })}
+                            style={{ marginTop: '15px' }}
+                        >
+                            📔 ジャーナルを追加
+                        </button>
+                    </div>
+                )}
+
+                {hasStudyRecord && (
                     <>
                         <div className="day-stat">
                             <span>勉強時間:</span>
@@ -87,11 +101,45 @@ export default function Calendar() {
                     </>
                 )}
 
-                {journal && journal.mood && (
-                    <div className="day-stat">
-                        <span>気分:</span>
-                        <span>{moodEmojis[journal.mood]}</span>
-                    </div>
+                {journal && (journal.mood || journal.freeform) && (
+                    <>
+                        {journal.mood && (
+                            <div className="day-stat">
+                                <span>気分:</span>
+                                <span>{moodEmojis[journal.mood]}</span>
+                            </div>
+                        )}
+
+                        {journal.freeform && (
+                            <div className="journal-preview" style={{
+                                backgroundColor: 'var(--bg-tertiary)',
+                                border: '1px solid var(--border-color)',
+                                borderRadius: '8px',
+                                padding: '12px',
+                                marginTop: '15px'
+                            }}>
+                                <h5 style={{ marginTop: 0, marginBottom: '8px', fontSize: '14px', fontWeight: 'bold', color: 'var(--text-primary)' }}>📝 ジャーナルプレビュー</h5>
+                                <p style={{
+                                    margin: 0,
+                                    fontSize: '13px',
+                                    color: 'var(--text-secondary)',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'pre-wrap',
+                                    maxHeight: '100px'
+                                }}>
+                                    {journal.freeform.length > 150 ? journal.freeform.substring(0, 150) + '...' : journal.freeform}
+                                </p>
+                                <button
+                                    className="btn btn-secondary"
+                                    onClick={() => navigate('/journal', { state: { date: dateStr } })}
+                                    style={{ marginTop: '10px', fontSize: '12px', padding: '6px 12px' }}
+                                >
+                                    全文を表示
+                                </button>
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
         );

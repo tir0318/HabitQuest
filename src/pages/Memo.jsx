@@ -139,6 +139,9 @@ export default function Memo() {
 
     return (
         <section className="page active" id="page-memo">
+            <div className="page-header">
+                <button className="btn btn-primary btn-large" onClick={openCreateModal}>+ 新規追加</button>
+            </div>
 
             <div className="memo-container">
                 <div className="memo-section quick-memos">

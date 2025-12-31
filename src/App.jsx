@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import QuickMemoBar from './components/QuickMemoBar';
+import RoutineResetModal from './components/RoutineResetModal';
 import LoadingScreen from './components/LoadingScreen';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useStorage } from './contexts/StorageContext';
@@ -33,6 +34,7 @@ const LoadingSpinner = () => (
 
 const Layout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const { tasks, showRoutineResetModal, setShowRoutineResetModal, confirmRoutineReset } = useStorage();
   const toggleMenu = () => setMobileMenuOpen(prev => !prev);
   const closeMenu = () => setMobileMenuOpen(false);
 
@@ -54,10 +56,21 @@ const Layout = () => {
       <div id="modals-container"></div>
       <div className="toast-container" id="toast-container"></div>
       <div className="level-up-overlay" id="level-up-overlay"></div>
+      {showRoutineResetModal && (
+        <RoutineResetModal
+          tasks={tasks}
+          onConfirm={confirmRoutineReset}
+          onCancel={() => setShowRoutineResetModal(false)}
+        />
+      )}
     </div>
   );
 };
 
+
+import { TimerProvider } from './contexts/TimerContext';
+
+// ... (existing imports)
 
 function App() {
   const { isLoading } = useStorage();
@@ -68,20 +81,22 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="tasks" element={<Tasks />} />
-          <Route path="routines" element={<Routines />} />
-          <Route path="habits" element={<Habits />} />
-          <Route path="timer" element={<Timer />} />
-          <Route path="journal" element={<Journal />} />
-          <Route path="memo" element={<Memo />} />
-          <Route path="calendar" element={<Calendar />} />
-          <Route path="stats" element={<Stats />} />
-          <Route path="settings" element={<Settings />} />
-        </Route>
-      </Routes>
+      <TimerProvider>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="tasks" element={<Tasks />} />
+            <Route path="routines" element={<Routines />} />
+            <Route path="habits" element={<Habits />} />
+            <Route path="timer" element={<Timer />} />
+            <Route path="journal" element={<Journal />} />
+            <Route path="memo" element={<Memo />} />
+            <Route path="calendar" element={<Calendar />} />
+            <Route path="stats" element={<Stats />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
+        </Routes>
+      </TimerProvider>
     </BrowserRouter>
   );
 }

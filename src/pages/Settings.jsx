@@ -78,7 +78,26 @@ export default function Settings() {
                             onChange={(e) => handleSettingChange('sessionsBeforeLongBreak', parseInt(e.target.value))}
                         />
                     </div>
+                    <div className="form-group" style={{ flexDirection: 'row', alignItems: 'center', gap: '20px', padding: '10px 0' }}>
+                        <div className="checkbox-group" onClick={() => handleSettingChange('autoStartWork', !settings.autoStartWork)}>
+                            <input
+                                type="checkbox"
+                                checked={settings.autoStartWork || false}
+                                onChange={() => { }}
+                            />
+                            <label>休憩終了後に作業を自動開始</label>
+                        </div>
+                        <div className="checkbox-group" onClick={() => handleSettingChange('autoStartBreak', !settings.autoStartBreak)}>
+                            <input
+                                type="checkbox"
+                                checked={settings.autoStartBreak || false}
+                                onChange={() => { }}
+                            />
+                            <label>作業終了後に休憩を自動開始</label>
+                        </div>
+                    </div>
                 </div>
+
 
                 <div className="settings-section">
                     <h3>🎮 ゲーミフィケーション設定</h3>
@@ -197,6 +216,6 @@ export default function Settings() {
                     </div>
                 </div>
             </div>
-        </section>
+        </section >
     );
 }
