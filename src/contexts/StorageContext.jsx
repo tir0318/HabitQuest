@@ -190,6 +190,7 @@ export function StorageProvider({ children }) {
 
     // Daily Reset Logic
     useEffect(() => {
+        if (isLoading) return;
         const today = new Date().toISOString().split('T')[0];
         if (user.lastActiveDate && user.lastActiveDate !== today) {
             console.log('New day detected, showing routine reset modal...');
