@@ -32,13 +32,13 @@ export default function RoutineResetModal({ onConfirm, onCancel }) {
 
                     {uncompleted.length > 0 ? (
                         <div style={{
-                            backgroundColor: '#fff1f2',
-                            border: '1px solid #fda4af',
+                            backgroundColor: 'var(--bg-danger-subtle, rgba(254, 226, 226, 0.1))',
+                            border: '1px solid var(--border-danger, #fda4af)',
                             borderRadius: '8px',
                             padding: '15px',
                             marginBottom: '20px'
                         }}>
-                            <h3 style={{ color: '#be123c', marginTop: 0, fontSize: '18px' }}>
+                            <h3 style={{ color: 'var(--text-danger, #f43f5e)', marginTop: 0, fontSize: '18px' }}>
                                 ⚠️ 未完了の日課 ({uncompleted.length})
                             </h3>
                             <ul style={{ listStyle: 'none', padding: 0, margin: '10px 0 0 0' }}>
@@ -47,10 +47,10 @@ export default function RoutineResetModal({ onConfirm, onCancel }) {
                                         marginBottom: '8px',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        backgroundColor: 'white',
+                                        backgroundColor: 'var(--bg-secondary)',
                                         padding: '8px',
                                         borderRadius: '6px',
-                                        border: '1px solid #e2e8f0'
+                                        border: '1px solid var(--border-color)'
                                     }}>
                                         <input
                                             type="checkbox"
@@ -59,12 +59,13 @@ export default function RoutineResetModal({ onConfirm, onCancel }) {
                                                 width: '20px',
                                                 height: '20px',
                                                 marginRight: '10px',
-                                                cursor: 'pointer'
+                                                cursor: 'pointer',
+                                                flexShrink: 0
                                             }}
                                         />
                                         <div>
-                                            <strong style={{ display: 'block' }}>{routine.name}</strong>
-                                            {routine.description && <span style={{ fontSize: '12px', color: '#666' }}>{routine.description}</span>}
+                                            <strong style={{ display: 'block', color: 'var(--text-primary)' }}>{routine.name}</strong>
+                                            {routine.description && <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{routine.description}</span>}
                                         </div>
                                     </li>
                                 ))}
@@ -72,33 +73,33 @@ export default function RoutineResetModal({ onConfirm, onCancel }) {
                         </div>
                     ) : (
                         <div style={{
-                            backgroundColor: '#ecfdf5',
-                            border: '1px solid #6ee7b7',
+                            backgroundColor: 'var(--bg-success-subtle, rgba(209, 250, 229, 0.1))',
+                            border: '1px solid var(--border-success, #6ee7b7)',
                             borderRadius: '8px',
                             padding: '15px',
                             marginBottom: '20px',
                             textAlign: 'center'
                         }}>
-                            <h3 style={{ color: '#047857', marginTop: 0 }}>✅ 昨日の日課はすべて完了！</h3>
-                            <p style={{ marginBottom: 0 }}>素晴らしい！気持ちよく一日をスタートしましょう。</p>
+                            <h3 style={{ color: 'var(--text-success, #10b981)', marginTop: 0 }}>✅ 昨日の日課はすべて完了！</h3>
+                            <p style={{ marginBottom: 0, color: 'var(--text-secondary)' }}>素晴らしい！気持ちよく一日をスタートしましょう。</p>
                         </div>
                     )}
 
                     {completedToday.length > 0 && (
                         <div style={{
-                            backgroundColor: '#f8fafc',
-                            border: '1px dashed #cbd5e1',
+                            backgroundColor: 'var(--bg-elevated)',
+                            border: '1px dashed var(--border-color)',
                             borderRadius: '8px',
                             padding: '15px',
                             marginTop: '20px',
                             opacity: 0.8
                         }}>
-                            <h4 style={{ marginTop: 0, color: '#64748b' }}>📋 完了済み ({completedToday.length})</h4>
+                            <h4 style={{ marginTop: 0, color: 'var(--text-secondary)' }}>📋 完了済み ({completedToday.length})</h4>
                             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                                 {completedToday.map(routine => (
                                     <li key={routine.id} style={{
                                         marginBottom: '4px',
-                                        color: '#94a3b8',
+                                        color: 'var(--text-disabled)',
                                         fontSize: '14px'
                                     }}>
                                         ✓ {routine.name}

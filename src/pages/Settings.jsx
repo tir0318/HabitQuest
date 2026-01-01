@@ -160,42 +160,7 @@ export default function Settings() {
                     </div>
                 </div>
 
-                <div className="settings-section">
-                    <h3>🛠️ デバッグツール</h3>
-                    <p style={{ fontSize: '0.9em', color: 'var(--text-secondary)', marginBottom: '10px' }}>
-                        開発・検証用の機能です。
-                    </p>
-                    <div className="debug-actions">
-                        <div className="debug-card" style={{ padding: '15px', background: '#f8fafc', borderRadius: '8px', border: '1px dashed #cbd5e1' }}>
-                            <h4 style={{ marginTop: 0, fontSize: '16px' }}>📅 日付操作</h4>
-                            <p style={{ fontSize: '14px', marginBottom: '10px' }}>最終アクティブ日を「昨日」に書き換えます。</p>
-                            <button
-                                className="btn btn-secondary w-100"
-                                onClick={() => {
-                                    const yesterday = new Date();
-                                    yesterday.setDate(yesterday.getDate() - 1);
 
-                                    const year = yesterday.getFullYear();
-                                    const month = String(yesterday.getMonth() + 1).padStart(2, '0');
-                                    const day = String(yesterday.getDate()).padStart(2, '0');
-                                    const yStr = `${year}-${month}-${day}`;
-
-                                    // Update context and localStorage
-                                    updateUser({ ...user, lastActiveDate: yStr });
-                                    showToast(`日付を ${yStr} に変更しました`, 'success');
-
-                                    // Verify explicitly (though hook listener should catch it if focused)
-                                    console.log('Debug: Date set to', yStr);
-                                }}
-                            >
-                                昨日にタイムスリップ
-                            </button>
-                            <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
-                                ※ボタンを押した後、一度他のタブに切り替えて戻ってくるか、1分待つとリセット画面が表示されます。
-                            </p>
-                        </div>
-                    </div>
-                </div>
 
                 <div className="settings-section danger-zone">
                     <h3>⚠️ データ管理 (バックアップ & 復元)</h3>
