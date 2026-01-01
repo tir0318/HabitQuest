@@ -18,24 +18,25 @@ export function TimerProvider({ children }) {
     const intervalRef = useRef(null);
     const isCompletingRef = useRef(false); // Prevent duplicate completion
 
-    // Initialize timer duration based on settings and mode
+    // Performance Optimization: Buffer time in ref and save periodically
+    const unsavedSecondsRef = useRef(0);
+    const studyRecordsRef = useRef(studyRecords);
+
+    // Keep ref in sync
+    useEffect(() => {
+        studyRecordsRef.current = studyRecords;
+    }, [studyRecords]);
+
+    // Update timer duration when settings or mode change
     useEffect(() => {
         let duration = settings.workTime;
         if (mode === 'break') duration = settings.breakTime;
         if (mode === 'long-break') duration = settings.longBreakTime;
 
-        // Only update totalTime/timeLeft if they are mismatched (e.g. settings changed or mode changed)
-        // But be careful not to reset if just navigating back to the page.
-        // Actually, since this is now a context, this effect runs when 'mode' or 'settings' changes.
-        // We want to update totalTime. If the timer is NOT running, we also reset timeLeft.
-
         const newTotalSeconds = duration * 60;
         setTotalTime(newTotalSeconds);
 
         if (!isRunning) {
-            // Only reset if we are not running. 
-            // Also, if we just mounted, we might want to respect the current state if it was saved?
-            // For now, simple logic: if not running, reset to max.
             setTimeLeft(newTotalSeconds);
         }
     }, [mode, settings.workTime, settings.breakTime, settings.longBreakTime]);
@@ -46,43 +47,79 @@ export function TimerProvider({ children }) {
             intervalRef.current = setInterval(() => {
                 setTimeLeft(prev => {
                     if (prev <= 1) {
-                        completeSession();
+                        completeSession(); // This will eventually trigger saving remaining time
                         return 0;
                     }
                     return prev - 1;
                 });
 
-                // Track accumulated time
-                trackTime();
+                // Accumulate unsaved time
+                unsavedSecondsRef.current += 1;
+
+                // Remove intermediate saving to avoid stale state race conditions.
+                // We save only on pause/stop/complete.
             }, 1000);
         } else {
-            console.log("Timer stopped or paused");
+            // Timer paused or stopped
             if (intervalRef.current) clearInterval(intervalRef.current);
             intervalRef.current = null;
         }
+
+        // Cleanup: Save progress when effect cleans up (pause, stop, unmount)
+        // Note: strict dependencies ensures this runs when isRunning changes or mode changes
         return () => {
             if (intervalRef.current) clearInterval(intervalRef.current);
+            // We must save any pending time when stopping/pausing
+            // However, we need to be careful not to save double if completeSession calls it.
+            // But saving 0 is harmless.
+            if (unsavedSecondsRef.current > 0) {
+                saveProgress();
+            }
         };
-    }, [isRunning]);
+    }, [isRunning, mode]); // Add mode to dependency to flush time if mode changes mid-run (rare but safe)
 
-    const trackTime = () => {
-        const today = new Date().toISOString().split('T')[0];
-        const record = studyRecords[today] || { studyTime: 0, breakTime: 0, pomodoros: 0, sessions: [] };
+    const saveProgress = () => {
+        if (unsavedSecondsRef.current === 0) return;
 
+        const secondsToAdd = unsavedSecondsRef.current;
+        unsavedSecondsRef.current = 0; // Reset immediately
+
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
+
+        // strict read from ref to get latest state
+        const currentRecords = studyRecordsRef.current;
+        const record = currentRecords[dateStr] || { studyTime: 0, breakTime: 0, pomodoros: 0, sessions: [] };
+
+        let newRecord = { ...record };
         if (mode === 'work') {
-            record.studyTime = (record.studyTime || 0) + 1;
+            newRecord.studyTime = (record.studyTime || 0) + secondsToAdd;
         } else {
-            record.breakTime = (record.breakTime || 0) + 1;
+            newRecord.breakTime = (record.breakTime || 0) + secondsToAdd;
         }
 
-        // This causes frequent re-renders/writes. Ideally debounced, but for now it's okay for local state responsiveness.
-        updateStudyRecords({ ...studyRecords, [today]: record });
+        console.log(`Saving progress: +${secondsToAdd}s to ${year}-${month}-${day} (${mode})`);
+
+        const updatedRecords = { ...currentRecords, [dateStr]: newRecord };
+        // CRITICAL: Optimistic update
+        studyRecordsRef.current = updatedRecords;
+
+        updateStudyRecords(updatedRecords);
     };
+
+    // Removed trackTime as it is replaced by saveProgress logic above
 
     const completeSession = () => {
         // Prevent duplicate execution
         if (isCompletingRef.current) return;
         isCompletingRef.current = true;
+
+        // Capture pending seconds immediately
+        const secondsToAdd = unsavedSecondsRef.current;
+        unsavedSecondsRef.current = 0;
 
         setIsRunning(false);
 
@@ -90,11 +127,27 @@ export function TimerProvider({ children }) {
         playAlarm(currentMode);
         showNotification(currentMode);
 
-        const today = new Date().toISOString().split('T')[0];
-        const record = { ...(studyRecords[today] || { studyTime: 0, breakTime: 0, pomodoros: 0, sessions: [] }) };
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
+
+        // Read latest records
+        const currentRecords = studyRecordsRef.current;
+        const record = { ...(currentRecords[dateStr] || { studyTime: 0, breakTime: 0, pomodoros: 0, sessions: [] }) };
+
+        // 1. Add pending time to the record
+        if (currentMode === 'work') {
+            record.studyTime = (record.studyTime || 0) + secondsToAdd;
+        } else {
+            record.breakTime = (record.breakTime || 0) + secondsToAdd;
+        }
+        console.log(`Session Complete: +${secondsToAdd}s to ${dateStr} (${currentMode})`);
+
         if (!record.sessions) record.sessions = [];
 
-        // Add session log
+        // 2. Add session log
         record.sessions.push({
             type: currentMode,
             taskId: currentTaskId,
@@ -132,7 +185,14 @@ export function TimerProvider({ children }) {
         }
 
         setMode(nextMode);
-        updateStudyRecords({ ...studyRecords, [today]: record });
+
+        // Single atomic update for both time and session
+        const finalRecords = { ...currentRecords, [dateStr]: record };
+
+        // CRITICAL: Optimistic update of ref to prevent stale reads if cleanup fires or rapid updates occur
+        studyRecordsRef.current = finalRecords;
+
+        updateStudyRecords(finalRecords);
 
         if (shouldAutoStart) {
             // Need a slight delay to allow state updates to settle if strictly needed, 

@@ -7,6 +7,7 @@ import RoutineResetModal from './components/RoutineResetModal';
 import LoadingScreen from './components/LoadingScreen';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useStorage } from './contexts/StorageContext';
+import { useDailyReset } from './hooks/useDailyReset';
 
 // Lazy Load Pages
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
@@ -35,6 +36,10 @@ const LoadingSpinner = () => (
 const Layout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const { tasks, showRoutineResetModal, setShowRoutineResetModal, confirmRoutineReset } = useStorage();
+
+  // Use independent hooks
+  useDailyReset();
+
   const toggleMenu = () => setMobileMenuOpen(prev => !prev);
   const closeMenu = () => setMobileMenuOpen(false);
 

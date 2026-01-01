@@ -188,20 +188,18 @@ export function StorageProvider({ children }) {
         }
     };
 
-    // Daily Reset Logic
-    useEffect(() => {
-        if (isLoading) return;
-        const today = new Date().toISOString().split('T')[0];
-        if (user.lastActiveDate && user.lastActiveDate !== today) {
-            console.log('New day detected, showing routine reset modal...');
-            setShowRoutineResetModal(true);
-        } else if (!user.lastActiveDate) {
-            update('user', { ...user, lastActiveDate: today }, setUser);
-        }
-    }, [user.lastActiveDate, tasks, habits]);
+    // Daily Reset Logic - now handled by useDailyReset hook
+    // We just provide state and updater
+
 
     const confirmRoutineReset = () => {
-        const today = new Date().toISOString().split('T')[0];
+        // Use local date
+        const d = new Date();
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const today = `${year}-${month}-${day}`;
+
         console.log('Resetting daily routines...');
 
         // Reset daily tasks

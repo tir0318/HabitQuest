@@ -2,12 +2,12 @@ import React from 'react';
 import { useStorage } from '../contexts/StorageContext';
 import { useGamification } from '../hooks/useGamification';
 import { useToast } from '../contexts/ToastContext';
+import { useTaskOperations } from '../hooks/useTaskOperations';
 import MarkdownNote from './MarkdownNote';
 
 export default function TaskCard({ task, onEdit }) {
-    const { categories, tasks, updateTasks } = useStorage();
-    const { addXP, subtractXP } = useGamification();
-    const { showToast } = useToast();
+    const { categories } = useStorage();
+    const { toggleTaskCompletion, handleDeleteTask, cycleTaskStatus } = useTaskOperations();
 
     // Mapping repeat types to labels
     const repeatLabels = { daily: '毎日', weekly: '毎週', monthly: '毎月' };
@@ -37,47 +37,20 @@ export default function TaskCard({ task, onEdit }) {
 
     const priorityLabels = { low: '低', medium: '中', high: '高' };
     const statusLabels = { 'not-started': '未着手', 'in-progress': '進行中', 'today': '今日' };
-    const statusOrder = ['not-started', 'in-progress', 'today'];
 
     const handleToggle = (e) => {
         e.stopPropagation();
-        const isCompleting = !task.completed;
-        const xpAmount = 10;
-
-        const updated = tasks.map(t => {
-            if (t.id === task.id) {
-                return { ...t, completed: isCompleting, completedAt: isCompleting ? new Date().toISOString() : null };
-            }
-            return t;
-        });
-
-        if (isCompleting) {
-            addXP(xpAmount);
-            showToast(`完了! +${xpAmount}XP`, 'success');
-        } else {
-            subtractXP(xpAmount);
-        }
-
-        updateTasks(updated);
+        toggleTaskCompletion(task);
     };
 
     const handleDelete = (e) => {
         e.stopPropagation();
-        if (window.confirm('削除しますか？')) {
-            updateTasks(tasks.filter(t => t.id !== task.id));
-            showToast('削除しました', 'success');
-        }
+        handleDeleteTask(task);
     };
 
     const handleStatusCycle = (e) => {
         e.stopPropagation();
-        const current = task.status || 'not-started';
-        const idx = statusOrder.indexOf(current);
-        const next = statusOrder[(idx + 1) % statusOrder.length];
-
-        const updated = tasks.map(t => t.id === task.id ? { ...t, status: next } : t);
-        updateTasks(updated);
-        showToast(`${statusLabels[next]} に変更しました`, 'success');
+        cycleTaskStatus(task);
     };
 
     return (
